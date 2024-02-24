@@ -1,0 +1,119 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  UserID Int @id @default(autoincrement())
+  Username String @unique
+  Email String @unique
+  Namalengkap String
+  Password String
+  Alamat String
+  Role Role @default(pengguna)
+  Peminjaman Peminjaman[]
+  Ulasan Ulasan[]
+  Koleksi Koleksi[]
+  Riwayatpinjam Riwayatpinjam[]
+}
+
+enum Role {
+  pengguna
+  petugas
+  admin
+}
+
+model Buku{
+  BookID Int @id @default(autoincrement())
+  Judul String
+  Tahun_terbit String
+  Penulis String
+  Jumlah_hlmn Int
+  Penerbit String
+  Status Status @default(tersedia)
+  Peminjaman Peminjaman[]
+  Ulasan Ulasan[]
+  Kategoribukurelasi Kategoribukurelasi[]
+  Koleksi Koleksi[]
+  Riwayatpinjam Riwayatpinjam[]
+  Genre Genre[]
+}
+
+enum Status {
+  dipinjam
+  tersedia
+  hilang
+}
+model Peminjaman{
+  PinjamID Int @id @default(autoincrement())
+  User User @relation(fields: [UserID],references: [UserID], onDelete: Cascade)
+  UserID Int
+  Buku Buku @relation(fields: [BookID],references: [BookID], onDelete: Cascade)
+  BookID Int
+  Tgl_pinjam DateTime
+  Tgl_kmbl DateTime
+  Status String
+  Riwayatpinjam Riwayatpinjam[]
+}
+
+model Ulasan{
+  UlasanID Int @id @default(autoincrement())
+  User User @relation(fields: [UserID],references: [UserID],onDelete: Cascade)
+  UserID Int
+  Buku Buku @relation(fields: [BookID],references: [BookID],onDelete: Cascade)
+  BookID Int
+  Tgl_review DateTime
+  Isi_ulasan String
+  Rating Int
+}
+
+model Kategoribuku{
+  KategoriID Int @id @default(autoincrement())
+  Namakategori String
+  Kategoribukurelasi Kategoribukurelasi[]
+}
+
+model Kategoribukurelasi{
+  KategorirelasiID Int @id @default(autoincrement())
+  Buku Buku @relation(fields: [BookID],references: [BookID],onDelete: Cascade)
+  BookID Int
+  Kategoribuku Kategoribuku @relation(fields: [KategoriID],references: [KategoriID],onDelete: Cascade)
+  KategoriID Int
+}
+
+model Koleksi{
+  KoleksiID Int @id @default(autoincrement())
+  User User @relation(fields: [UserID],references: [UserID],onDelete: Cascade)
+  UserID Int
+  Buku Buku @relation(fields: [BookID],references: [BookID],onDelete: Cascade)
+  BookID Int
+}
+
+model Riwayatpinjam{
+  RiwayatID Int @id @default(autoincrement())
+  User User @relation(fields: [UserID],references: [UserID],onDelete: Cascade)
+  UserID Int
+  Buku Buku @relation(fields: [BookID],references: [BookID],onDelete: Cascade)
+  BookID Int
+  Peminjaman Peminjaman @relation(fields: [PinjamID],references: [PinjamID],onDelete: Cascade)
+  PinjamID Int
+  Tgl_pinjam DateTime
+  Tgl_kmbl DateTime
+}
+
+model Genre{
+  GenreID Int @id @default(autoincrement())
+  Buku Buku @relation(fields: [BookID],references: [BookID],onDelete: Cascade)
+  BookID Int
+  Namagenre String
+}
