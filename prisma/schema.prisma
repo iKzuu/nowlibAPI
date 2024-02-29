@@ -24,7 +24,6 @@ model User {
   Peminjaman Peminjaman[]
   Ulasan Ulasan[]
   Koleksi Koleksi[]
-  Riwayatpinjam Riwayatpinjam[]
 }
 
 enum Role {
@@ -36,34 +35,32 @@ enum Role {
 model Buku{
   BookID Int @id @default(autoincrement())
   Judul String
-  Tahun_terbit String
+  Tahunterbit String
   Penulis String
-  Jumlah_hlmn Int
+  Jumlahhlmn Int
   Penerbit String
-  Status Status @default(tersedia)
   Peminjaman Peminjaman[]
   Ulasan Ulasan[]
   Kategoribukurelasi Kategoribukurelasi[]
   Koleksi Koleksi[]
-  Riwayatpinjam Riwayatpinjam[]
   Genre Genre[]
 }
 
-enum Status {
-  dipinjam
-  tersedia
-  hilang
-}
 model Peminjaman{
   PinjamID Int @id @default(autoincrement())
   User User @relation(fields: [UserID],references: [UserID], onDelete: Cascade)
   UserID Int
   Buku Buku @relation(fields: [BookID],references: [BookID], onDelete: Cascade)
   BookID Int
-  Tgl_pinjam DateTime
-  Tgl_kmbl DateTime
-  Status String
-  Riwayatpinjam Riwayatpinjam[]
+  TglPeminjaman DateTime
+  TglPengembalian DateTime
+  Status Status @default(dipinjam)
+}
+
+enum Status {
+  dipinjam
+  tersedia
+  hilang
 }
 
 model Ulasan{
@@ -72,14 +69,14 @@ model Ulasan{
   UserID Int
   Buku Buku @relation(fields: [BookID],references: [BookID],onDelete: Cascade)
   BookID Int
-  Tgl_review DateTime
-  Isi_ulasan String
+  Tglreview DateTime
+  Ulasan String
   Rating Int
 }
 
 model Kategoribuku{
   KategoriID Int @id @default(autoincrement())
-  Namakategori String
+  NamaKategori String
   Kategoribukurelasi Kategoribukurelasi[]
 }
 
@@ -97,18 +94,6 @@ model Koleksi{
   UserID Int
   Buku Buku @relation(fields: [BookID],references: [BookID],onDelete: Cascade)
   BookID Int
-}
-
-model Riwayatpinjam{
-  RiwayatID Int @id @default(autoincrement())
-  User User @relation(fields: [UserID],references: [UserID],onDelete: Cascade)
-  UserID Int
-  Buku Buku @relation(fields: [BookID],references: [BookID],onDelete: Cascade)
-  BookID Int
-  Peminjaman Peminjaman @relation(fields: [PinjamID],references: [PinjamID],onDelete: Cascade)
-  PinjamID Int
-  Tgl_pinjam DateTime
-  Tgl_kmbl DateTime
 }
 
 model Genre{

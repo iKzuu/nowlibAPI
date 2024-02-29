@@ -1,4 +1,9 @@
-import { createUser, getUser, getUserID } from "@/controller/UserController";
+import { getUser, getUserID } from "@/controller/UserController";
+import login from "./login";
+import register from "./register";
+import logout from "./logout";
+import loginPetugas from "./loginpetugas";
+import createPetugas from "./registerpetugas";
 
 export default async function handler(req, res) {
   try {
@@ -11,7 +16,6 @@ export default async function handler(req, res) {
         }
         break;
       case "POST":
-        await createUser(req, res);
         break;
       case "PATCH":
         break;
@@ -27,4 +31,12 @@ export default async function handler(req, res) {
       error: error,
     });
   }
+}
+
+export {
+  login,
+  register,
+  logout,
+  loginPetugas,
+  createPetugas,
 }
