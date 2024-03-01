@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   try {
     switch (req.method) {
       case "GET":
-        if (req.query.uid) {
+        if (req.query.id) {
          await getUserID(req, res);
         } else {
          await getUser(req, res);

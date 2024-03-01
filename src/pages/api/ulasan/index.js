@@ -1,23 +1,23 @@
-import { createCategory, getKategori, getCategoryID, editKategori, deleteKategori } from "@/controller/KategoriController";
+import { addUlasan, deleteUlasan, getUlasan, getUlasanID, updateUlasan } from "@/controller/UlasanController";
 
 export default async function handler(req, res) {
     try {
       switch (req.method) {
         case "GET":
           if (req.query.id) {
-            await getCategoryID(req, res);
+           await getUlasanID(req, res);
           } else {
-            await getKategori(req, res);
+           await getUlasan(req, res);
           }
           break;
         case "POST":
-            await createCategory(req, res);
+            await addUlasan(req, res);
           break;
         case "PATCH":
-            await editKategori(req,res);
+            await updateUlasan(req, res);
           break;
         case "DELETE":
-            await deleteKategori(req, res);
+            await deleteUlasan(req, res);
           break;
         default:
           res.setHeader("Allow", ["GET", "POST", "PATCH", "DELETE"]);

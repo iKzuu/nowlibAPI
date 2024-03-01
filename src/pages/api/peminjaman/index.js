@@ -1,16 +1,17 @@
-import { getPeminjaman, getPeminjamanID } from "@/controller/PeminjamanController";
+import { createPeminjaman, getPeminjaman, getPeminjamanID } from "@/controller/PeminjamanController";
 
 export default async function handler(req, res) {
     try {
       switch (req.method) {
         case "GET":
-          if (req.query.uid) {
+          if (req.query.id) {
            await getPeminjamanID(req, res);
           } else {
            await getPeminjaman(req, res);
           }
           break;
         case "POST":
+          await createPeminjaman(req, res);
           break;
         case "PATCH":
           break;

@@ -13,7 +13,6 @@ export async function getUser(req, res) {
                 Namalengkap: true,
                 Alamat: true,
                 Email: true,
-                Password: true,
                 Username: true,
                 Role: true,
             }
@@ -36,17 +35,31 @@ export async function getUser(req, res) {
 }
 
 export async function getUserID(req, res) {
-    const { uid } = req.query;
+    const { id } = req.query;
   
     try {
       let user = await prisma.user.findUnique({
         where: {
-          UserID: parseInt(uid),
+          UserID: parseInt(id),
         },
+        select: {
+          Namalengkap: true,
+          Alamat: true,
+          Email: true,
+          Username: true,
+          Role: true,
+        }
         // include: {
         //   Profile: true,
         // },
       });
+
+      if (!user) {
+        res.status(401).json({
+          message: "User tidak di temukan",
+          data: user,
+        });
+      }
   
       res.status(200).json({
         message: "User found successfully",

@@ -1,17 +1,17 @@
-import { deleteBuku, getBuku, getBukuID, updateBuku } from "@/controller/BukuController";
-import addBook from "./addbook";
+import { deleteBuku, getBuku, getBukuID, updateBuku, addBook } from "@/controller/BukuController";
 
 export default async function handler(req, res) {
     try {
       switch (req.method) {
         case "GET":
-          if (req.query.uid) {
+          if (req.query.id) {
            await getBukuID(req, res);
           } else {
            await getBuku(req, res);
           }
           break;
         case "POST":
+          await addBook(req, res);
           break;
         case "PATCH":
           await updateBuku(req, res);
@@ -30,8 +30,4 @@ export default async function handler(req, res) {
         error: error,
       });
     }
-  }
-
-  export {
-    addBook,
   }

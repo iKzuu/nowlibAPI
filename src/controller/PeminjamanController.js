@@ -33,12 +33,12 @@ export async function getPeminjaman(req, res) {
 }
 
 export async function getPeminjamanID(req, res) {
-    const { uid } = req.query;
+    const { id } = req.query;
   
     try {
       let peminjaman = await prisma.peminjaman.findUnique({
         where: {
-          PinjamID: parseInt(uid),
+          PinjamID: parseInt(id),
         },
         // include: {
         //   Profile: true,

@@ -26,14 +26,21 @@ export async function createGenre(req, res) {
   }
 
   export async function getGenreID(req, res) {
-    const { uid } = req.query;
+    const { id } = req.query;
   
     try {
       let genre = await prisma.genre.findUnique({
         where: {
-          GenreID: parseInt(uid),
+          GenreID: parseInt(id),
         }
       });
+
+      if (!genre) {
+        res.status(401).json({
+          message: "Genre tidak di temukan",
+          data: genre,
+        });
+      }
   
       res.status(200).json({
         message: "Genre found successfully",

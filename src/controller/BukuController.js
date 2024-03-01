@@ -33,17 +33,24 @@ export async function getBuku(req, res) {
 }
 
 export async function getBukuID(req, res) {
-    const { uid } = req.query;
+    const { id } = req.query;
   
     try {
       let buku = await prisma.buku.findUnique({
         where: {
-          BookID: parseInt(uid),
+          BookID: parseInt(id),
         },
         // include: {
         //   Profile: true,
         // },
       });
+
+      if (!buku) {
+        res.status(401).json({
+          message: "Buku tidak di temukan",
+          data: buku,
+        });
+      }
   
       res.status(200).json({
         message: "Book found successfully",
