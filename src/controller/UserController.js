@@ -102,11 +102,14 @@ export async function getUserID(req, res) {
       if (!user || !(await bcrypt.compare(Password, user.Password))) {
         return res.status(401).json({ message: 'Username atau password salah' });
       }
+      
+      const { Password: _, ...userData } = user;
 
-      const token = jwt.sign({ userId: user.UserID, role: user.Role }, 'iniadalahaku', { expiresIn: '1h' });
+      const token = jwt.sign({ userId: user.UserID }, 'iniadalahaku', { expiresIn: '1h' });
 
       res.status(200).json({
         message: 'Login berhasil',
+        data: userData,
         token,
       });
 
@@ -136,13 +139,15 @@ export async function getUserID(req, res) {
       if (user.Role === "admin") {
         role = "admin";
       }
+
+      const { Password: _, ...userData } = user;
   
-      const token = jwt.sign({ userId: user.UserID, role: user.Role }, 'iniadalahaku', { expiresIn: '1h' });
+      const token = jwt.sign({ userId: user.UserID }, 'iniadalahaku', { expiresIn: '1h' });
   
       res.status(200).json({
         message: 'Login berhasil',
+        data: userData,
         token,
-        role,
       });
   
     } catch (error) {

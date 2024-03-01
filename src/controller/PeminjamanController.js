@@ -44,6 +44,10 @@ export async function getPeminjamanID(req, res) {
         //   Profile: true,
         // },
       });
+
+      if (!peminjaman) {
+        return res.status(404).json({ message: "Peminjaman not found" });
+      }
   
       res.status(200).json({
         message: "Peminjaman found successfully",
@@ -65,8 +69,8 @@ export async function createPeminjaman(req, res) {
 
       let peminjaman = await prisma.peminjaman.create({
         data: {
-          UserID,
-          BookID,
+          UserID: parseInt(UserID),
+          BookID: parseInt(BookID),
           TglPeminjaman : new Date(TglPeminjaman),
           TglPengembalian : new Date(TglPengembalian),
         },

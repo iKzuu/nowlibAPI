@@ -51,6 +51,7 @@ export async function getCategoryID(req, res) {
     }
 }
 
+  //Menambah Kategori
   export async function createCategory(req, res) {
 
     const { NamaKategori } = req.body;
@@ -75,7 +76,8 @@ export async function getCategoryID(req, res) {
     }
   }
 
-  export async function getRelasi(req, res) {
+  //Get Relasi ID
+  export async function getRelasiID(req, res) {
     const { uid } = req.query;
   
     try {
@@ -98,32 +100,107 @@ export async function getCategoryID(req, res) {
     }
   }
 
-  export async function getRelasiID(req, res) {
-    const {skip} = req.query;
-    const skipValue = skip ? Number(skip) : 0;
+  //Get Relasi
+//   export async function getRelasi(req, res) {
+//     const {skip} = req.query;
+//     const skipValue = skip ? Number(skip) : 0;
 
-    try {
-        let kategoribukurelasi = await prisma.kategoribukurelasi.findMany({
-            skip: skipValue,
-            select: {
-                KategoriID: true,
-                BookID: true,
-            }
-        });
+//     try {
+//         let kategoribukurelasi = await prisma.kategoribukurelasi.findMany({
+//             skip: skipValue,
+//             select: {
+//                 KategoriID: true,
+//                 BookID: true,
+//                 GenreID: true,
+//             }
+//         });
 
-        let count = await prisma.kategoribuku.count();
+//         let count = await prisma.kategoribuku.count();
 
-        res.status(200).json({
-            message: "kategori relasi found successfully",
-            total: count,
-            data: kategoribukurelasi,
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            message: "Internal server error",
-            error: error,
-        });
-    }
+//         res.status(200).json({
+//             message: "kategori relasi found successfully",
+//             total: count,
+//             data: kategoribukurelasi,
+//         });
+//     } catch (error) {
+//         console.log(error);
+//         res.status(500).json({
+//             message: "Internal server error",
+//             error: error,
+//         });
+//     }
+// }
+
+export async function getRelasi(req, res) {
+  const { skip } = req.query;
+  const skipValue = skip ? Number(skip) : 0;
+
+  try {
+      let kategoribukurelasi = await prisma.kategoribukurelasi.findMany({
+          skip: skipValue,
+          select: {
+              Buku: {
+                  select: {
+                      Judul: true,
+                      Penulis: true,
+                      Penerbit: true
+                  }
+              },
+              Kategoribuku: {
+                  select: {
+                      NamaKategori: true
+                  }
+              },
+              Genre: {
+                  select: {
+                      Namagenre: true
+                  }
+              }
+          }
+      });
+
+      let count = await prisma.kategoribuku.count();
+
+      res.status(200).json({
+          message: "kategori relasi found successfully",
+          total: count,
+          data: kategoribukurelasi,
+      });
+  } catch (error) {
+      console.log(error);
+      res.status(500).json({
+          message: "Internal server error",
+          error: error,
+      });
+  }
 }
+
+
+//membuat relasi
+export async function createRelasi(req, res) {
+
+  const { KategoriID, BookID, GenreID } = req.body;
   
+  try {
+    let kategoribukurelasi = await prisma.kategoribukurelasi.create({
+      data: {
+        KategoriID: parseInt(KategoriID),
+        BookID: parseInt(BookID),
+        GenreID: parseInt(GenreID),
+      },
+    });
+    res.status(201).json({
+      message: "Kategori added successfully",
+      data: kategoribukurelasi,
+    });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error,
+    });
+  }
+}
+
+

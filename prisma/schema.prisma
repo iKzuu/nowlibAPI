@@ -43,7 +43,6 @@ model Buku{
   Ulasan Ulasan[]
   Kategoribukurelasi Kategoribukurelasi[]
   Koleksi Koleksi[]
-  Genre Genre[]
 }
 
 model Peminjaman{
@@ -86,6 +85,8 @@ model Kategoribukurelasi{
   BookID Int
   Kategoribuku Kategoribuku @relation(fields: [KategoriID],references: [KategoriID],onDelete: Cascade)
   KategoriID Int
+  Genre Genre @relation(fields: [GenreID],references: [GenreID],onDelete: Cascade)
+  GenreID Int
 }
 
 model Koleksi{
@@ -98,7 +99,6 @@ model Koleksi{
 
 model Genre{
   GenreID Int @id @default(autoincrement())
-  Buku Buku @relation(fields: [BookID],references: [BookID],onDelete: Cascade)
-  BookID Int
+  Kategoribukurelasi Kategoribukurelasi[]
   Namagenre String
 }
