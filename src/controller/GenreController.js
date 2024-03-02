@@ -83,25 +83,32 @@ export async function createGenre(req, res) {
     }
 }
 
+//edit Genre
 export async function updateGenre(req, res) {
   const { id } = req.query;
-  const { Judul, Penulis, Tahunterbit, Jumlahhlmn, Penerbit } = req.body;
+  const { Namagenre } = req.body;
 
   try {
-    let buku = await prisma.buku.update({
-      where: { BookID: parseInt(id) },
+    let genre = await prisma.genre.findUnique({
+      where: { GenreID: parseInt(id) },
+    });
+
+    if (!genre) {
+      res.status(401).json({
+        message: "Genre yang anda maksud tidak ada"
+      });
+    }
+
+    await prisma.genre.update({
+      where: { GenreID: parseInt(id) },
       data: {
-          Judul,
-          Tahunterbit,
-          Penulis,
-          Jumlahhlmn: parseInt(Jumlahhlmn),
-          Penerbit,
+        Namagenre,
       },
     });
 
     res.status(200).json({
-      message: "Book updated successfully",
-      data: buku,
+      message: "Genre edited successfully",
+      data: genre,
     });
   } catch (error) {
     console.log(error);
@@ -112,25 +119,37 @@ export async function updateGenre(req, res) {
   }
 }
 
-//deleteBuku
+//delete Genre
 export async function deleteGenre(req, res) {
-const { id } = req.query;
+  const { id } = req.query;
 
-try {
-  await prisma.buku.delete({
-    where: {
-      BookID: parseInt(id),
+  try {
+    let genre = await prisma.genre.findUnique({
+      where: {
+        GenreID: parseInt(id),
+      },
+    });
+
+    if (!genre) {
+      res.status(401).json({
+        message: "data tidak ada atau mungkin sudah di hapus CMIIW :)",
+      });
     }
-  })
 
-  res.status(200).json({
-    message: "Book deleted successfully",
-  });
-} catch (error) {
-  console.log(error);
-  res.status(500).json({
-    message: "Internal server error",
-    error: error,
-  });
-}
+    await prisma.genre.delete({
+      where: {
+        GenreID: parseInt(id),
+      },
+    });
+
+    res.status(200).json({
+      message: "Genre deleted successfully",
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error,
+    });
+  }
 }

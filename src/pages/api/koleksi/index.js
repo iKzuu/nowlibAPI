@@ -1,23 +1,22 @@
-import { getGenre, getGenreID, createGenre, updateGenre, deleteGenre } from "@/controller/GenreController";
+import { addKoleksi, deleteKoleksi, getKoleksi, getKoleksiID } from "@/controller/KoleksiController";
 
 export default async function handler(req, res) {
     try {
       switch (req.method) {
         case "GET":
           if (req.query.id) {
-            await getGenreID(req, res);
+            await getKoleksiID(req, res);
           } else {
-            await getGenre(req, res);
+            await getKoleksi(req, res);
           }
           break;
         case "POST":
-            await createGenre(req, res);
+            await addKoleksi(req, res);
           break;
         case "PATCH":
-            await updateGenre(req, res);
           break;
         case "DELETE":
-            await deleteGenre(req, res);
+            await deleteKoleksi(req, res);
           break;
         default:
           res.setHeader("Allow", ["GET", "POST", "PATCH", "DELETE"]);

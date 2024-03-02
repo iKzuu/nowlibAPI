@@ -108,7 +108,7 @@ export async function getCategoryID(req, res) {
     }
 }
 
-//delete Relasi
+//delete Kategori
 export async function deleteKategori(req, res) {
   const { id } = req.query;
 

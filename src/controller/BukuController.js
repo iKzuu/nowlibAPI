@@ -101,7 +101,17 @@ export async function getBukuID(req, res) {
     const { Judul, Penulis, Tahunterbit, Jumlahhlmn, Penerbit } = req.body;
   
     try {
-      let buku = await prisma.buku.update({
+      let buku = await prisma.buku.findUnique({
+        where: { BookID: parseInt(id) },
+      });
+
+      if (!buku) {
+        res.status(401).json({
+          message: "data yang anda maksud tidak ada www",
+        });
+      }
+
+      await prisma.buku.update({
         where: { BookID: parseInt(id) },
         data: {
             Judul,
@@ -130,11 +140,23 @@ export async function deleteBuku(req, res) {
   const { id } = req.query;
 
   try {
+    let buku = await prisma.buku.findUnique({
+      where: {
+        BookID: parseInt(id),
+      }
+    });
+
+    if (!buku) {
+      res.status(401).json({
+        message: "data tidak ditemukan atau mungkin sudah di hapus CMIIW :3",
+      });
+    }
+
     await prisma.buku.delete({
       where: {
         BookID: parseInt(id),
       }
-    })
+    });
 
     res.status(200).json({
       message: "Book deleted successfully",
