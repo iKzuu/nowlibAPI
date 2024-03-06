@@ -1,7 +1,9 @@
 import { createUser } from "@/controller/UserController";
+import { cors, middleware } from "@/helpers/middleware";
 
 export default async function handler(req, res) {
   try {
+    middleware(req, res, cors);
     if (req.method === "POST") {
       await createUser(req, res);
     } else {

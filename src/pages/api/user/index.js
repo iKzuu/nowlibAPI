@@ -4,9 +4,11 @@ import register from "./register";
 import logout from "./logout";
 import loginPetugas from "./loginpetugas";
 import createPetugas from "./registerpetugas";
+import { cors, middleware } from "@/helpers/middleware";
 
 export default async function handler(req, res) {
   try {
+    middleware(req, res, cors);
     switch (req.method) {
       case "GET":
         if (req.query.id) {
@@ -16,6 +18,10 @@ export default async function handler(req, res) {
         }
         break;
       case "POST":
+        // await register(req, res);
+        // await login(req, res);
+        // await createPetugas(req, res);
+        // await loginPetugas(req, res);
         break;
       case "PATCH":
         break;
