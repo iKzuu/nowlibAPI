@@ -8,6 +8,7 @@ export async function getBuku(req, res) {
         let buku = await prisma.buku.findMany({
             skip: skipValue,
             select: {
+                BookID : true,
                 Judul: true,
                 Tahunterbit: true,
                 Penulis: true,

@@ -201,6 +201,7 @@ export async function getRelasi(req, res) {
       let kategoribukurelasi = await prisma.kategoribukurelasi.findMany({
           skip: skipValue,
           select: {
+              KategorirelasiID: true,
               Buku: {
                   select: {
                       Judul: true,

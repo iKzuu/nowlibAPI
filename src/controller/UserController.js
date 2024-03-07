@@ -109,7 +109,7 @@ export async function getUserID(req, res) {
 
     try {
       const user = await prisma.user.findFirst({
-        where: { Username },
+        where: { Username: Username },
       });
 
       if (!user || !(await bcrypt.compare(Password, user.Password))) {
@@ -120,7 +120,7 @@ export async function getUserID(req, res) {
 
       const token = jwt.sign({ userId: user.UserID }, 'iniadalahaku', { expiresIn: '1h' });
 
-      res.status(200).json({
+      res.status(201).json({
         message: 'Login berhasil',
         data: userData,
         token,

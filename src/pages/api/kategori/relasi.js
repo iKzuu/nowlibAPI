@@ -1,7 +1,9 @@
 import { createRelasi, deleteRelasi, editRelasi, getRelasi, getRelasiID } from "@/controller/KategoriController";
+import { cors, middleware } from "@/helpers/middleware";
 
 export default async function handler(req, res) {
     try {
+      middleware(req,res,cors)
       switch (req.method) {
         case "GET":
           if (req.query.id) {
