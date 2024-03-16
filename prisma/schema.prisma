@@ -39,6 +39,8 @@ model Buku{
   Penulis String
   Jumlahhlmn Int
   Penerbit String
+  Deskripsi String ?
+  Gambar String ?
   Peminjaman Peminjaman[]
   Ulasan Ulasan[]
   Kategoribukurelasi Kategoribukurelasi[]

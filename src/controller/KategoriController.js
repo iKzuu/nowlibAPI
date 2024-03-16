@@ -157,7 +157,8 @@ export async function deleteKategori(req, res) {
             select: {
                 Judul: true,
                 Penulis: true,
-                Penerbit: true
+                Penerbit: true,
+                Gambar: true,
             },
           },
           Kategoribuku: {
@@ -206,7 +207,9 @@ export async function getRelasi(req, res) {
                   select: {
                       Judul: true,
                       Penulis: true,
-                      Penerbit: true
+                      Penerbit: true,
+                      Gambar: true,
+                      Deskripsi: true,
                   }
               },
               Kategoribuku: {

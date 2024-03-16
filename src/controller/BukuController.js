@@ -14,6 +14,8 @@ export async function getBuku(req, res) {
                 Penulis: true,
                 Jumlahhlmn: true,
                 Penerbit: true,
+                Deskripsi: true,
+                Gambar: true,
             }
         });
 
@@ -70,7 +72,7 @@ export async function getBukuID(req, res) {
   // nambahin buku
   export async function addBook(req, res) {
 
-    const { Judul, Tahunterbit, Penulis, Jumlahhlmn, Penerbit} = req.body;
+    const { Judul, Tahunterbit, Penulis, Jumlahhlmn, Penerbit, Gambar, Deskripsi} = req.body;
     
     try {
       let buku = await prisma.buku.create({
@@ -80,6 +82,8 @@ export async function getBukuID(req, res) {
           Penulis,
           Jumlahhlmn: parseInt(Jumlahhlmn),
           Penerbit,
+          Gambar,
+          Deskripsi,
         },
       });
       res.status(201).json({
@@ -99,7 +103,7 @@ export async function getBukuID(req, res) {
   // Update a book by ID
   export async function updateBuku(req, res) {
     const { id } = req.query;
-    const { Judul, Penulis, Tahunterbit, Jumlahhlmn, Penerbit } = req.body;
+    const { Judul, Penulis, Tahunterbit, Jumlahhlmn, Penerbit, Gambar, Deskripsi } = req.body;
   
     try {
       let buku = await prisma.buku.findUnique({
@@ -120,6 +124,8 @@ export async function getBukuID(req, res) {
             Penulis,
             Jumlahhlmn: parseInt(Jumlahhlmn),
             Penerbit,
+            Gambar,
+            Deskripsi,
         },
       });
   
