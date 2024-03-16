@@ -69,6 +69,42 @@ export async function getBukuID(req, res) {
   }
 
 
+  // export async function addBook(req, res) {
+  //   upload.single('Gambar')(req, res, async (err) => {
+  //     if (err) {
+  //       return res.status(500).json({ message: 'Error uploading file' });
+  //     }
+  
+  //     const { Judul, Tahunterbit, Penulis, Jumlahhlmn, Penerbit, Deskripsi } = req.body;
+  //     const imagePath = `/uploads/${req.file.originalname}`;
+  
+  //     try {
+  //       let buku = await prisma.buku.create({
+  //         data: {
+  //           Judul,
+  //           Tahunterbit,
+  //           Penulis,
+  //           Jumlahhlmn: parseInt(Jumlahhlmn),
+  //           Penerbit,
+  //           Gambar: imagePath,
+  //           Deskripsi,
+  //         },
+  //       });
+  //       res.status(201).json({
+  //         message: 'Book added successfully',
+  //         data: buku,
+  //       });
+  //     } catch (error) {
+  //       console.log(error);
+  //       res.status(500).json({
+  //         message: 'Internal server error',
+  //         error: error,
+  //       });
+  //     }
+  //   });
+  // }
+
+
   // nambahin buku
   export async function addBook(req, res) {
 

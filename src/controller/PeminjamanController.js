@@ -157,6 +157,12 @@ export async function getPeminjamanUserID(req, res) {
         });
       }
 
+      peminjaman = peminjaman.map(item => ({
+        ...item,
+        TglPeminjaman: item.TglPeminjaman.toISOString().substring(0, 10),
+        TglPengembalian: item.TglPengembalian.toISOString().substring(0, 10),
+      }));
+
       res.status(201).json({
           message: "Peminjaman found successfully",
           data: peminjaman,
