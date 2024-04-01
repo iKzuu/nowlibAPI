@@ -10,6 +10,7 @@ export async function getUser(req, res) {
         let user = await prisma.user.findMany({
             skip: skipValue,
             select: {
+                UserID: true,
                 Namalengkap: true,
                 Alamat: true,
                 Email: true,
@@ -43,6 +44,7 @@ export async function getUserID(req, res) {
           UserID: parseInt(id),
         },
         select: {
+          UserID: true,
           Namalengkap: true,
           Alamat: true,
           Email: true,
@@ -117,6 +119,14 @@ export async function getUserID(req, res) {
       }
       
       const { Password: _, ...userData } = user;
+
+      let role = 'pengguna';
+      if (user.Role === 'admin') {
+        role = 'admin';
+      }
+      if (user.Role === 'petugas') {
+        role === 'petugas';
+      }
 
       const token = jwt.sign({ userId: user.UserID }, 'iniadalahaku', { expiresIn: '1h' });
 

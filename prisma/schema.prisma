@@ -39,7 +39,7 @@ model Buku{
   Penulis String
   Jumlahhlmn Int
   Penerbit String
-  Deskripsi String ?
+  Deskripsi String ? @db.Text
   Gambar String ?
   Peminjaman Peminjaman[]
   Ulasan Ulasan[]
@@ -55,13 +55,13 @@ model Peminjaman{
   BookID Int
   TglPeminjaman DateTime
   TglPengembalian DateTime
-  Status Status @default(dipinjam)
+  Status Status @default(sedangpinjam)
 }
 
 enum Status {
-  dipinjam
-  tersedia
-  hilang
+  sedangpinjam
+  selesai
+  belumselesai
 }
 
 model Ulasan{

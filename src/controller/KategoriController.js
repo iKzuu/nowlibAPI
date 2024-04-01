@@ -155,19 +155,25 @@ export async function deleteKategori(req, res) {
         select: {
           Buku: {
             select: {
+                BookID: true,
                 Judul: true,
                 Penulis: true,
                 Penerbit: true,
                 Gambar: true,
+                Deskripsi: true,
+                Tahunterbit: true,
+                Jumlahhlmn: true,
             },
           },
           Kategoribuku: {
             select: {
-                NamaKategori: true
+                KategoriID: true,
+                NamaKategori: true,
             }
           },
           Genre: {
             select: {
+                GenreID: true,
                 Namagenre: true
             }
           }
@@ -194,6 +200,112 @@ export async function deleteKategori(req, res) {
     }
   }
 
+  export async function getRelasiBookID(req, res) {
+    const { idbuku } = req.query;
+  
+    try {
+      let kategoribukurelasi = await prisma.kategoribukurelasi.findMany({
+        where: { BookID: parseInt( idbuku ) },
+        select: {
+          Buku: {
+            select: {
+                BookID: true,
+                Judul: true,
+                Penulis: true,
+                Penerbit: true,
+                Gambar: true,
+            },
+          },
+          Kategoribuku: {
+            select: {
+                KategoriID: true,
+                NamaKategori: true,
+            }
+          },
+          Genre: {
+            select: {
+                GenreID: true,
+                Namagenre: true
+            }
+          }
+        }
+      });
+
+      if (!kategoribukurelasi || kategoribukurelasi.length === 0) {
+        return res.status(404).json({
+          message: "Kategori tidak ditemukan",
+          data: []
+        });
+      }
+  
+      res.status(201).json({
+        message: "Kategori relasi found successfully",
+        data: kategoribukurelasi,
+      });
+
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: "Internal server error",
+        error: error,
+      });
+    }
+  }
+
+  export async function getRelasiKategoriID(req, res) {
+    const { idkategori } = req.query;
+  
+    try {
+      let kategoribukurelasi = await prisma.kategoribukurelasi.findMany({
+        where: { KategoriID: parseInt( idkategori) },
+        select: {
+          Buku: {
+            select: {
+                Judul: true,
+                Penulis: true,
+                Penerbit: true,
+                Gambar: true,
+            },
+          },
+          Kategoribuku: {
+            select: {
+                KategoriID: true,
+                NamaKategori: true,
+            }
+          },
+          Genre: {
+            select: {
+                GenreID: true,
+                Namagenre: true
+            }
+          }
+        }
+      });
+
+      if (!kategoribukurelasi || kategoribukurelasi.length === 0) {
+        return res.status(404).json({
+          message: "Kategori tidak ditemukan",
+          data: []
+        });
+      }
+
+      let count = await prisma.kategoribukurelasi.count();
+  
+      res.status(201).json({
+        message: "Kategori relasi found successfully",
+        total: count,
+        data: kategoribukurelasi,
+      });
+
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: "Internal server error",
+        error: error,
+      });
+    }
+  }
+
 export async function getRelasi(req, res) {
   const { skip } = req.query;
   const skipValue = skip ? Number(skip) : 0;
@@ -205,6 +317,7 @@ export async function getRelasi(req, res) {
               KategorirelasiID: true,
               Buku: {
                   select: {
+                      BookID: true,
                       Judul: true,
                       Penulis: true,
                       Penerbit: true,
@@ -214,12 +327,14 @@ export async function getRelasi(req, res) {
               },
               Kategoribuku: {
                   select: {
-                      NamaKategori: true
+                      KategoriID: true,
+                      NamaKategori: true,
                   }
               },
               Genre: {
                   select: {
-                      Namagenre: true
+                      GenreID: true,
+                      Namagenre: true,
                   }
               }
           }
@@ -268,7 +383,6 @@ export async function createRelasi(req, res) {
     });
   }
 }
-
   // Edit relasi
   export async function editRelasi(req, res) {
     const { id } = req.query;

@@ -1,7 +1,54 @@
+import { parse } from "dotenv";
 import prisma from "../../prisma/client";
 
 //get Koleksi By ID
-export async function getKoleksiID(req, res) {
+export async function getKoleksiUserID(req, res) {
+    const { userId } = req.query;
+  
+    try {
+      let koleksi = await prisma.koleksi.findMany({
+        where: { UserID: parseInt(userId) },
+        select: {
+          UserID: true,
+          BookID: true,
+          Buku: {
+            select: {
+                Judul: true,
+                Penulis: true,
+                Penerbit: true,
+                Gambar: true,
+            }
+          },
+          User: {
+            select : {
+              Username: true,
+              Email: true,
+            }
+          }
+        }
+      });
+
+      if (!koleksi || koleksi.length === 0) {
+        return res.status(404).json({
+          message: "Koleksi tidak ditemukan",
+          data: []
+        });
+      }
+  
+      res.status(201).json({
+        message: "Koleksi found successfully",
+        data: koleksi,
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({
+        message: "Internal server error",
+        error: error,
+      });
+    }
+  }
+
+  export async function getKoleksiID(req, res) {
     const { id } = req.query;
   
     try {

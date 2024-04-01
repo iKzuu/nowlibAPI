@@ -152,18 +152,36 @@ export async function getBukuID(req, res) {
         });
       }
 
+      let dataToUpdate = {};
+      if (Judul) dataToUpdate.Judul = Judul;
+      if (Penulis) dataToUpdate.Penulis = Penulis;
+      if (Tahunterbit) dataToUpdate.Tahunterbit = Tahunterbit;
+      if (Jumlahhlmn) dataToUpdate.Jumlahhlmn = Jumlahhlmn;
+      if (Penerbit) dataToUpdate.Penerbit = Penerbit;
+      if (Gambar) dataToUpdate.Gambar = Gambar;
+      if (Deskripsi) dataToUpdate.Deskripsi = Deskripsi;
+
       await prisma.buku.update({
         where: { BookID: parseInt(id) },
-        data: {
-            Judul,
-            Tahunterbit,
-            Penulis,
-            Jumlahhlmn: parseInt(Jumlahhlmn),
-            Penerbit,
-            Gambar,
-            Deskripsi,
-        },
+        data: dataToUpdate,
       });
+
+      buku = await prisma.buku.findUnique({
+        where: { BookID: parseInt(id) },
+      });
+
+      // await prisma.buku.update({
+      //   where: { BookID: parseInt(id) },
+      //   data: {
+      //       Judul,
+      //       Tahunterbit,
+      //       Penulis,
+      //       Jumlahhlmn: parseInt(Jumlahhlmn),
+      //       Penerbit,
+      //       Gambar,
+      //       Deskripsi,
+      //   },
+      // });
   
       res.status(200).json({
         message: "Book updated successfully",
