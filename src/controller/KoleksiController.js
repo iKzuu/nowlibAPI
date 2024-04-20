@@ -11,6 +11,7 @@ export async function getKoleksiUserID(req, res) {
       select: {
         UserID: true,
         BookID: true,
+        KoleksiID: true,
         Buku: {
           select: {
             Judul: true,
