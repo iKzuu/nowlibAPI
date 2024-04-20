@@ -138,59 +138,6 @@ export async function getBukuID(req, res) {
 //   });
 // }
 
-export async function addBook(req, res) {
-  const {
-    Judul,
-    Tahunterbit,
-    Penulis,
-    Jumlahhlmn,
-    Penerbit,
-    Gambar,
-    Deskripsi,
-  } = req.body;
-
-  // Extract the base64 data and the file type from the Gambar field
-  const base64Data = Gambar.split(',')[1];
-  const fileType = Gambar.split(';')[0].split('/')[1];
-
-  // Validate the file type
-  if (!['jpg', 'jpeg', 'png'].includes(fileType)) {
-    return res.status(400).json({
-      message: "Invalid file type. Only jpg, jpeg, and png are allowed.",
-    });
-  }
-
-  try {
-    let buku = await prisma.buku.create({
-      data: {
-        Judul,
-        Tahunterbit,
-        Penulis,
-        Jumlahhlmn: parseInt(Jumlahhlmn),
-        Penerbit,
-        Gambar: {
-          create: {
-            fileType,
-            base64Data,
-          },
-        },
-        Deskripsi,
-      },
-    });
-    res.status(201).json({
-      message: "Book added successfully",
-      data: buku,
-    });
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: "Internal server error",
-      error: error,
-    });
-  }
-}
-
-// nambahin buku
 // export async function addBook(req, res) {
 //   const {
 //     Judul,
@@ -202,6 +149,17 @@ export async function addBook(req, res) {
 //     Deskripsi,
 //   } = req.body;
 
+//   // Extract the base64 data and the file type from the Gambar field
+//   const base64Data = Gambar.split(',')[1];
+//   const fileType = Gambar.split(';')[0].split('/')[1];
+
+//   // Validate the file type
+//   if (!['jpg', 'jpeg', 'png'].includes(fileType)) {
+//     return res.status(400).json({
+//       message: "Invalid file type. Only jpg, jpeg, and png are allowed.",
+//     });
+//   }
+
 //   try {
 //     let buku = await prisma.buku.create({
 //       data: {
@@ -210,7 +168,12 @@ export async function addBook(req, res) {
 //         Penulis,
 //         Jumlahhlmn: parseInt(Jumlahhlmn),
 //         Penerbit,
-//         Gambar,
+//         Gambar: {
+//           create: {
+//             fileType,
+//             base64Data,
+//           },
+//         },
 //         Deskripsi,
 //       },
 //     });
@@ -226,6 +189,43 @@ export async function addBook(req, res) {
 //     });
 //   }
 // }
+
+// nambahin buku
+export async function addBook(req, res) {
+  const {
+    Judul,
+    Tahunterbit,
+    Penulis,
+    Jumlahhlmn,
+    Penerbit,
+    Gambar,
+    Deskripsi,
+  } = req.body;
+
+  try {
+    let buku = await prisma.buku.create({
+      data: {
+        Judul,
+        Tahunterbit,
+        Penulis,
+        Jumlahhlmn: parseInt(Jumlahhlmn),
+        Penerbit,
+        Gambar,
+        Deskripsi,
+      },
+    });
+    res.status(201).json({
+      message: "Book added successfully",
+      data: buku,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error,
+    });
+  }
+}
 
 // Update a book by ID
 export async function updateBuku(req, res) {
