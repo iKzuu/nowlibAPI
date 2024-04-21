@@ -15,6 +15,7 @@ datasource db {
 
 model User {
   UserID Int @id @default(autoincrement())
+  Profile String ?
   Username String @unique
   Email String @unique
   Namalengkap String
@@ -40,7 +41,7 @@ model Buku{
   Jumlahhlmn Int
   Penerbit String
   Deskripsi String ? @db.Text
-  Gambar String ?
+  Gambar String ? @db.LongText
   Peminjaman Peminjaman[]
   Ulasan Ulasan[]
   Kategoribukurelasi Kategoribukurelasi[]

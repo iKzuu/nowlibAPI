@@ -79,6 +79,7 @@ export async function addUlasan(req, res) {
         Rating: parseInt(Rating),
       },
     });
+
     res.status(201).json({
       message: "Ulasan added successfully",
       data: ulasan,

@@ -71,6 +71,7 @@ export async function getBukuID(req, res) {
           include : {
             User: {
               select : {
+                Profile: true,
                 Namalengkap: true,
                 Username: true,
                 Alamat: true,
@@ -82,6 +83,11 @@ export async function getBukuID(req, res) {
         },
       },
     });
+
+    buku.Ulasan = buku.Ulasan.map((item) => ({
+      ...item,
+      Tglreview: item.Tglreview.toISOString().substring(0, 10),
+    }));
 
     if (!buku) {
       res.status(401).json({
@@ -191,6 +197,42 @@ export async function getBukuID(req, res) {
 // }
 
 // nambahin buku
+// export async function addBook(req, res) {
+//   const {
+//     Judul,
+//     Tahunterbit,
+//     Penulis,
+//     Jumlahhlmn,
+//     Penerbit,
+//     Gambar,
+//     Deskripsi,
+//   } = req.body;
+
+//   try {
+//     let buku = await prisma.buku.create({
+//       data: {
+//         Judul,
+//         Tahunterbit,
+//         Penulis,
+//         Jumlahhlmn: parseInt(Jumlahhlmn),
+//         Penerbit,
+//         Gambar,
+//         Deskripsi,
+//       },
+//     });
+//     res.status(201).json({
+//       message: "Book added successfully",
+//       data: buku,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({
+//       message: "Internal server error",
+//       error: error,
+//     });
+//   }
+// }
+
 export async function addBook(req, res) {
   const {
     Judul,
@@ -202,7 +244,12 @@ export async function addBook(req, res) {
     Deskripsi,
   } = req.body;
 
+  // Mendapatkan data gambar base64 dari req.body
+  // const Gambar = req.body.Gambar;
+
   try {
+    // Mengonversi base64 ke Bytes
+    // const decodedImage = Buffer.from(Gambar, 'base64');
     let buku = await prisma.buku.create({
       data: {
         Judul,
@@ -210,7 +257,8 @@ export async function addBook(req, res) {
         Penulis,
         Jumlahhlmn: parseInt(Jumlahhlmn),
         Penerbit,
-        Gambar,
+        // Menyimpan data gambar dalam format biner
+        Gambar, 
         Deskripsi,
       },
     });
@@ -226,6 +274,8 @@ export async function addBook(req, res) {
     });
   }
 }
+
+
 
 // Update a book by ID
 export async function updateBuku(req, res) {
