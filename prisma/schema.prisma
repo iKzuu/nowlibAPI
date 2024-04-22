@@ -15,7 +15,7 @@ datasource db {
 
 model User {
   UserID Int @id @default(autoincrement())
-  Profile String ?
+  Profile String ? @db.LongText
   Username String @unique
   Email String @unique
   Namalengkap String

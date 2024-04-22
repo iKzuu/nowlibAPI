@@ -1,6 +1,7 @@
 import prisma from "../../prisma/client";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { useId } from "react";
 
 export async function getUser(req, res) {
   const { skip } = req.query;
@@ -51,9 +52,6 @@ export async function getUserID(req, res) {
         Username: true,
         Role: true,
       },
-      // include: {
-      //   Profile: true,
-      // },
     });
 
     if (!user) {
@@ -77,6 +75,7 @@ export async function getUserID(req, res) {
 }
 
 //pengguna biasa wirr
+
 export async function createUser(req, res) {
   const { Namalengkap, Alamat, Email, Password, Username } = req.body;
 
@@ -99,6 +98,58 @@ export async function createUser(req, res) {
     });
     res.status(201).json({
       message: "User created successfully",
+      data: user,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error,
+    });
+  }
+}
+
+//edit user
+export async function editUser(req, res) {
+  const { userId } = req.query;
+  const { Profile, Namalengkap, Alamat, Email, Username } = req.body;
+
+  try {
+    let user = await prisma.user.findUnique({
+      where: { UserID: parseInt(userId) },
+    });
+
+    if (!user) {
+      res.status(401).json({
+        message: "data yang anda maksud tidak ada www",
+      });
+    }
+
+    let dataToUpdate = {};
+    if (Profile) dataToUpdate.Profile = Profile;
+    if (Namalengkap) dataToUpdate.Namalengkap = Namalengkap;
+    if (Username) dataToUpdate.Username = Username;
+    if (Email) dataToUpdate.Email = Email;
+    if (Alamat) dataToUpdate.Alamat = Alamat;
+
+    await prisma.user.update({
+      where: { UserID: parseInt(userId) },
+      data: dataToUpdate,
+    });
+
+    user = await prisma.user.findUnique({
+      where: { UserID: parseInt(userId) },
+    });
+
+    let editedField = "";
+    if (Profile) editedField = "Profile";
+    else if (Namalengkap) editedField = "Namalengkap";
+    else if (Alamat) editedField = "Alamat";
+    else if (Email) editedField = "Email";
+    else if (Username) editedField = "Username";
+
+    res.status(201).json({
+      message: `Edited ${editedField} successfully`,
       data: user,
     });
   } catch (error) {

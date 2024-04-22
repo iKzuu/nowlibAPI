@@ -1,4 +1,4 @@
-import { getUser, getUserID } from "@/controller/UserController";
+import { editUser, getUser, getUserID } from "@/controller/UserController";
 import login from "./login";
 import register from "./register";
 import logout from "./logout";
@@ -18,12 +18,9 @@ export default async function handler(req, res) {
         }
         break;
       case "POST":
-        // await register(req, res);
-        // await login(req, res);
-        // await createPetugas(req, res);
-        // await loginPetugas(req, res);
         break;
       case "PATCH":
+        await editUser (req, res);
         break;
       case "DELETE":
         break;

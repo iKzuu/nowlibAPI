@@ -275,8 +275,6 @@ export async function addBook(req, res) {
   }
 }
 
-
-
 // Update a book by ID
 export async function updateBuku(req, res) {
   const { id } = req.query;
@@ -318,19 +316,6 @@ export async function updateBuku(req, res) {
     buku = await prisma.buku.findUnique({
       where: { BookID: parseInt(id) },
     });
-
-    // await prisma.buku.update({
-    //   where: { BookID: parseInt(id) },
-    //   data: {
-    //       Judul,
-    //       Tahunterbit,
-    //       Penulis,
-    //       Jumlahhlmn: parseInt(Jumlahhlmn),
-    //       Penerbit,
-    //       Gambar,
-    //       Deskripsi,
-    //   },
-    // });
 
     res.status(200).json({
       message: "Book updated successfully",
