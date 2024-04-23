@@ -354,15 +354,90 @@ export async function getRelasi(req, res) {
 }
 
 //membuat relasi
+// export async function createRelasi(req, res) {
+//   const { KategoriID, BookID, GenreID } = req.body;
+
+//   try {
+//     let kategoribukurelasi = await prisma.kategoribukurelasi.create({
+//       data: {
+//         KategoriID: parseInt(KategoriID),
+//         BookID: parseInt(BookID),
+//         GenreID: parseInt(GenreID),
+//       },
+//     });
+//     res.status(201).json({
+//       message: "Kategori added successfully",
+//       data: kategoribukurelasi,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({
+//       message: "Internal server error",
+//       error: error,
+//     });
+//   }
+// }
+
 export async function createRelasi(req, res) {
-  const { KategoriID, BookID, GenreID } = req.body;
+  const { Judul, NamaKategori, Namagenre } = req.body;
 
   try {
+    // Mencari ID Kategori berdasarkan NamaKategori
+    const kategoribuku = await prisma.kategoribuku.findFirst({
+      where: {
+        NamaKategori: NamaKategori,
+      },
+    });
+
+    console.log("Kategoribuku:", kategoribuku);
+
+    if (!kategoribuku) {
+      return res.status(404).json({
+        message: "Kategori not found",
+      });
+    }
+
+    // Mencari ID Genre berdasarkan Genre
+    const genre = await prisma.genre.findFirst({
+      where: {
+        Namagenre: Namagenre,
+      },
+    });
+
+    console.log("Genre:", genre);
+
+    if (!genre) {
+      return res.status(404).json({
+        message: "Genre not found",
+      });
+    }
+
+    // Mencari ID Book berdasarkan Judul
+    const buku = await prisma.buku.findFirst({
+      where: {
+        Judul: Judul,
+      },
+    });
+
+    console.log("Buku:", buku);
+
+    if (!buku) {
+      return res.status(404).json({
+        message: "Buku not found",
+      });
+    }
+
     let kategoribukurelasi = await prisma.kategoribukurelasi.create({
       data: {
-        KategoriID: parseInt(KategoriID),
-        BookID: parseInt(BookID),
-        GenreID: parseInt(GenreID),
+        Buku: {
+          connect: { BookID: buku.BookID } // Connecting the Buku record
+        },
+        Kategoribuku: {
+          connect: { KategoriID: kategoribuku.KategoriID } // Connecting the Kategoribuku record
+        },
+        Genre: {
+          connect: { GenreID: genre.GenreID } // Connecting the Genre record
+        }
       },
     });
     res.status(201).json({
@@ -377,6 +452,8 @@ export async function createRelasi(req, res) {
     });
   }
 }
+
+
 
 // Edit relasi
 export async function editRelasi(req, res) {

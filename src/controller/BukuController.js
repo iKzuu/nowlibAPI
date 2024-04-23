@@ -242,14 +242,37 @@ export async function addBook(req, res) {
     Penerbit,
     Gambar,
     Deskripsi,
+    NamaKategori,
+    Namagenre,
   } = req.body;
 
-  // Mendapatkan data gambar base64 dari req.body
-  // const Gambar = req.body.Gambar;
-
   try {
-    // Mengonversi base64 ke Bytes
-    // const decodedImage = Buffer.from(Gambar, 'base64');
+    // Mencari ID Kategori berdasarkan NamaKategori
+    const kategoribuku = await prisma.kategoribuku.findFirst({
+      where: {
+        NamaKategori: NamaKategori,
+      },
+    });
+
+    if (!kategoribuku) {
+      return res.status(404).json({
+        message: "Kategori not found",
+      });
+    }
+
+    // Mencari ID Genre berdasarkan Namagenre
+    const genre = await prisma.genre.findFirst({
+      where: {
+        Namagenre: Namagenre,
+      },
+    });
+
+    if (!genre) {
+      return res.status(404).json({
+        message: "Genre not found",
+      });
+    }
+
     let buku = await prisma.buku.create({
       data: {
         Judul,
@@ -257,11 +280,21 @@ export async function addBook(req, res) {
         Penulis,
         Jumlahhlmn: parseInt(Jumlahhlmn),
         Penerbit,
-        // Menyimpan data gambar dalam format biner
-        Gambar, 
+        Gambar,
         Deskripsi,
+        Kategoribukurelasi: {
+          create: {
+            Kategoribuku: {
+              connect: { KategoriID: kategoribuku.KategoriID }
+            },
+            Genre: {
+              connect: { GenreID: genre.GenreID }
+            }
+          }
+        }
       },
     });
+
     res.status(201).json({
       message: "Book added successfully",
       data: buku,
@@ -274,6 +307,7 @@ export async function addBook(req, res) {
     });
   }
 }
+
 
 // Update a book by ID
 export async function updateBuku(req, res) {
