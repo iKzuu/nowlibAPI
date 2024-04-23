@@ -17,18 +17,6 @@ export async function getPeminjaman(req, res) {
         TglPengembalian: true,
         Status: true,
         Buku: true,
-        // Buku: {
-        //   select: {
-        //     BookID : true,
-        //     Judul: true,
-        //     Tahunterbit: true,
-        //     Penulis: true,
-        //     Jumlahhlmn: true,
-        //     Penerbit: true,
-        //     Deskripsi: true,
-        //     Gambar: true,
-        //   }
-        // },
         User: {
           select: {
             Namalengkap: true,
@@ -40,6 +28,12 @@ export async function getPeminjaman(req, res) {
         },
       },
     });
+
+    peminjaman = peminjaman.map((item) => ({
+      ...item,
+      TglPeminjaman: item.TglPeminjaman.toISOString().substring(0, 10),
+      TglPengembalian: item.TglPengembalian.toISOString().substring(0, 10),
+    }));
 
     let count = await prisma.peminjaman.count();
 
@@ -145,31 +139,9 @@ export async function getPeminjamanUserID(req, res) {
             Username: true,
             Alamat: true,
             Email: true,
-          }
+          },
         },
         Buku: true,
-        // Buku: {
-        //     select: {
-        //         BookID: true,
-        //         Judul: true,
-        //         Tahunterbit: true,
-        //         Penulis: true,
-        //         Jumlahhlmn: true,
-        //         Penerbit: true,
-        //         Deskripsi: true,
-        //         Gambar: true,
-        //     }
-        // },
-        // User: {
-        //   select: {
-        //     UserID: true,
-        //     Namalengkap: true,
-        //     Alamat: true,
-        //     Email: true,
-        //     Username: true,
-        //     Role: true,
-        //   }
-        // }
       },
     });
 
@@ -339,7 +311,6 @@ export async function konfirmasiPengembalian(req, res) {
 //     }
 // }
 
-
 // Fungsi untuk mengubah status peminjaman yang sudah selesai
 async function updatePeminjamanStatus() {
   try {
@@ -382,12 +353,12 @@ export async function getPeminjamanSedangPinjamUserID(req, res) {
       },
       include: {
         User: {
-          select : {
+          select: {
             Namalengkap: true,
             Username: true,
             Alamat: true,
             Email: true,
-          }
+          },
         },
         Buku: true,
       },

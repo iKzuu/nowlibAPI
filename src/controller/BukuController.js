@@ -146,6 +146,81 @@ export async function getBukuID(req, res) {
 //   }
 // }
 
+// export async function addBook(req, res) {
+//   const {
+//     Judul,
+//     Tahunterbit,
+//     Penulis,
+//     Jumlahhlmn,
+//     Penerbit,
+//     Gambar,
+//     Deskripsi,
+//     NamaKategori,
+//     Namagenre,
+//   } = req.body;
+
+//   try {
+//     // Mencari ID Kategori berdasarkan NamaKategori
+//     const kategoribuku = await prisma.kategoribuku.findFirst({
+//       where: {
+//         NamaKategori: NamaKategori,
+//       },
+//     });
+
+//     if (!kategoribuku) {
+//       return res.status(404).json({
+//         message: "Kategori not found",
+//       });
+//     }
+
+//     // Mencari ID Genre berdasarkan Namagenre
+//     const genre = await prisma.genre.findFirst({
+//       where: {
+//         Namagenre: Namagenre,
+//       },
+//     });
+
+//     if (!genre) {
+//       return res.status(404).json({
+//         message: "Genre not found",
+//       });
+//     }
+
+//     let buku = await prisma.buku.create({
+//       data: {
+//         Judul,
+//         Tahunterbit,
+//         Penulis,
+//         Jumlahhlmn: parseInt(Jumlahhlmn),
+//         Penerbit,
+//         Gambar,
+//         Deskripsi,
+//         Kategoribukurelasi: {
+//           create: {
+//             Kategoribuku: {
+//               connect: { KategoriID: kategoribuku.KategoriID }
+//             },
+//             Genre: {
+//               connect: { GenreID: genre.GenreID }
+//             }
+//           }
+//         }
+//       },
+//     });
+
+//     res.status(201).json({
+//       message: "Book added successfully",
+//       data: buku,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({
+//       message: "Internal server error",
+//       error: error,
+//     });
+//   }
+// }
+
 export async function addBook(req, res) {
   const {
     Judul,
@@ -160,29 +235,31 @@ export async function addBook(req, res) {
   } = req.body;
 
   try {
-    // Mencari ID Kategori berdasarkan NamaKategori
-    const kategoribuku = await prisma.kategoribuku.findFirst({
+    let kategoribuku = await prisma.kategoribuku.findFirst({
       where: {
         NamaKategori: NamaKategori,
       },
     });
 
     if (!kategoribuku) {
-      return res.status(404).json({
-        message: "Kategori not found",
+      kategoribuku = await prisma.kategoribuku.create({
+        data: {
+          NamaKategori: NamaKategori,
+        },
       });
     }
 
-    // Mencari ID Genre berdasarkan Namagenre
-    const genre = await prisma.genre.findFirst({
+    let genre = await prisma.genre.findFirst({
       where: {
         Namagenre: Namagenre,
       },
     });
 
     if (!genre) {
-      return res.status(404).json({
-        message: "Genre not found",
+      genre = await prisma.genre.create({
+        data: {
+          Namagenre: Namagenre,
+        },
       });
     }
 
@@ -198,13 +275,13 @@ export async function addBook(req, res) {
         Kategoribukurelasi: {
           create: {
             Kategoribuku: {
-              connect: { KategoriID: kategoribuku.KategoriID }
+              connect: { KategoriID: kategoribuku.KategoriID },
             },
             Genre: {
-              connect: { GenreID: genre.GenreID }
-            }
-          }
-        }
+              connect: { GenreID: genre.GenreID },
+            },
+          },
+        },
       },
     });
 
