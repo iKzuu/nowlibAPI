@@ -30,8 +30,8 @@ export async function getKoleksiUserID(req, res) {
     });
 
     if (!koleksi || koleksi.length === 0) {
-      return res.status(404).json({
-        message: "Koleksi tidak ditemukan",
+      return res.status(200).json({
+        message: "Koleksi kosong",
         data: [],
       });
     }

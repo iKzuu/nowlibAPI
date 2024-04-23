@@ -12,6 +12,7 @@ export async function getUser(req, res) {
       skip: skipValue,
       select: {
         UserID: true,
+        Profile: true,
         Namalengkap: true,
         Alamat: true,
         Email: true,
@@ -46,6 +47,7 @@ export async function getUserID(req, res) {
       },
       select: {
         UserID: true,
+        Profile: true,
         Namalengkap: true,
         Alamat: true,
         Email: true,

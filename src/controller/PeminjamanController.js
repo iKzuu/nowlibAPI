@@ -174,8 +174,8 @@ export async function getPeminjamanUserID(req, res) {
     });
 
     if (!peminjaman || peminjaman.length === 0) {
-      return res.status(404).json({
-        message: "Peminjaman tidak ditemukan",
+      return res.status(200).json({
+        message: "Peminjaman Kosong",
         data: [],
       });
     }
