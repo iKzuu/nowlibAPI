@@ -40,9 +40,6 @@ export async function getUlasanID(req, res) {
       where: {
         UlasanID: parseInt(id),
       },
-      // include: {
-      //   Profile: true,
-      // },
     });
 
     if (!ulasan) {
