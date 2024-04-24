@@ -56,15 +56,16 @@ model Peminjaman{
   BookID Int
   TglPeminjaman DateTime
   TglPengembalian DateTime
-  Status Status @default(sedangpinjam)
+  Status Status @default(tunggukonfirmasi)
   InvoiceID String ? @unique
   isConfirmed Boolean @default(false)
 }
 
 enum Status {
+  tunggukonfirmasi
   sedangpinjam
+  belumkembali
   selesai
-  belumselesai
 }
 
 model Ulasan{

@@ -11,6 +11,7 @@ export async function getPeminjaman(req, res) {
       skip: skipValue,
       select: {
         PinjamID: true,
+        InvoiceID: true,
         UserID: true,
         BookID: true,
         TglPeminjaman: true,
@@ -61,6 +62,7 @@ export async function getPeminjamanID(req, res) {
       },
       select: {
         PinjamID: true,
+        InvoiceID: true,
         UserID: true,
         BookID: true,
         TglPeminjaman: true,
@@ -122,12 +124,30 @@ export async function getPeminjamanUserID(req, res) {
   const { userId } = req.query;
 
   try {
+
+    const user = await prisma.user.findUnique({
+      where: {
+        UserID: parseInt(userId),
+      },
+      select: {
+        UserID: true,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User tidak ditemukan",
+        data: [],
+      });
+    }
+
     let peminjaman = await prisma.peminjaman.findMany({
       where: {
         UserID: parseInt(userId), // Assuming UserID is a numeric field
       },
       select: {
         PinjamID: true,
+        InvoiceID: true,
         UserID: true,
         BookID: true,
         TglPeminjaman: true,
@@ -145,7 +165,7 @@ export async function getPeminjamanUserID(req, res) {
       },
     });
 
-    if (!peminjaman || peminjaman.length === 0) {
+    if (peminjaman.length === 0) {
       return res.status(200).json({
         message: "Peminjaman Kosong",
         data: [],
@@ -183,7 +203,10 @@ export async function createPeminjaman(req, res) {
   }
 
   try {
-    //menghitung jumlah peminjaman yang di lakukan user perharinya
+    // Generate a unique invoice ID
+    const invoiceID = `INV/NWLB/${Math.floor(Math.random() * 1000000)}`;
+
+    // Menghitung jumlah peminjaman yang dilakukan user perharinya
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const countPeminjaman = await prisma.peminjaman.count({
@@ -195,20 +218,20 @@ export async function createPeminjaman(req, res) {
       },
     });
 
-    //membatasi jumlah peminjaman menjadi maksimal 3 buku perhari
+    // Membatasi jumlah peminjaman menjadi maksimal 3 buku per hari
     if (countPeminjaman >= 3) {
       return res.status(404).json({
         message: "Anda sudah mencapai batas peminjaman pada hari ini",
       });
     }
 
-    //memeriksa pengguna apakah memeriksa buku yang sama
+    // Memeriksa pengguna apakah meminjam buku yang sama
     const existingPeminjaman = await prisma.peminjaman.findFirst({
       where: {
         UserID: parseInt(UserID),
         BookID: parseInt(BookID),
         Status: {
-          not: "selesai", //memerikas peminjaman yang belum selesai atau masih berstatus sedang pinjam
+          not: "selesai", // Memerikas peminjaman yang belum selesai atau masih berstatus sedangpinjam,tunggukonfirmasi,belumkembali
         },
       },
     });
@@ -224,14 +247,15 @@ export async function createPeminjaman(req, res) {
         UserID: parseInt(UserID),
         BookID: parseInt(BookID),
         TglPeminjaman,
-        // TglPeminjaman : new Date(TglPeminjaman),
         TglPengembalian: new Date(TglPengembalian),
+        InvoiceID: invoiceID, // Include the auto-generated invoice ID
       },
     });
 
     res.status(201).json({
       message: "Buku terpinjam",
       data: peminjaman,
+      invoiceID: invoiceID,
     });
   } catch (error) {
     console.log(error);
@@ -242,14 +266,15 @@ export async function createPeminjaman(req, res) {
   }
 }
 
-// Endpoint untuk admin mengonfirmasi pengembalian buku
-export async function konfirmasiPengembalian(req, res) {
-  const { PinjamID } = req.body;
+// Endpoint untuk admin mengonfirmasi peminjaman & pengembalian buku
+
+export async function konfirmasiPeminjaman(req, res) {
+  const { InvoiceID } = req.body;
 
   try {
-    // Mengambil peminjaman berdasarkan PinjamID
+    // Mengambil peminjaman berdasarkan InvoiceID
     const peminjaman = await prisma.peminjaman.findUnique({
-      where: { PinjamID: parseInt(PinjamID) },
+      where: { InvoiceID },
     });
 
     if (!peminjaman) {
@@ -260,12 +285,12 @@ export async function konfirmasiPengembalian(req, res) {
 
     // Mengupdate status peminjaman menjadi "selesai" dan isConfirmed menjadi true
     await prisma.peminjaman.update({
-      where: { PinjamID: parseInt(PinjamID) },
-      data: { Status: "selesai", isConfirmed: true },
+      where: { InvoiceID },
+      data: { Status: "sedangpinjam", isConfirmed: true },
     });
 
     res.status(200).json({
-      message: "Pengembalian buku telah dikonfirmasi",
+      message: "Peminjaman buku telah dikonfirmasi",
     });
   } catch (error) {
     console.error("Error confirming pengembalian buku:", error);
@@ -275,41 +300,6 @@ export async function konfirmasiPengembalian(req, res) {
     });
   }
 }
-
-// async function updatePeminjamanStatus() {
-//     try {
-//       const peminjaman = await prisma.peminjaman.findMany({
-//         where: {
-//           TglPengembalian: {
-//             lt: new Date(), // Memeriksa peminjaman yang TglPengembalian-nya sudah lewat
-//           },
-//           Status: "sedangpinjam", // Memeriksa peminjaman yang masih dalam status "sedangpinjam"
-//         },
-//       });
-
-//       if (peminjaman && peminjaman.length > 0) {
-//         await Promise.all(
-//           peminjaman.map(async (p) => {
-//             if (!p.isConfirmed) {
-//               // Jika belum dikonfirmasi admin, status menjadi "belumselesai"
-//               await prisma.peminjaman.update({
-//                 where: { PinjamID: p.PinjamID },
-//                 data: { Status: "belumselesai" },
-//               });
-//             } else {
-//               // Jika sudah dikonfirmasi admin, status menjadi "selesai"
-//               await prisma.peminjaman.update({
-//                 where: { PinjamID: p.PinjamID },
-//                 data: { Status: "selesai" },
-//               });
-//             }
-//           })
-//         );
-//       }
-//     } catch (error) {
-//       console.error("Error updating peminjaman status:", error);
-//     }
-// }
 
 // Fungsi untuk mengubah status peminjaman yang sudah selesai
 async function updatePeminjamanStatus() {
@@ -328,7 +318,7 @@ async function updatePeminjamanStatus() {
         peminjaman.map(async (p) => {
           await prisma.peminjaman.update({
             where: { PinjamID: p.PinjamID },
-            data: { Status: "belumselsesai" },
+            data: { Status: "belumkembali" },
           });
         })
       );
@@ -340,6 +330,40 @@ async function updatePeminjamanStatus() {
 
 // Fungsi untuk menjalankan updatePeminjamanStatus() setiap jam sekali
 setInterval(updatePeminjamanStatus, 60000); // 3600000 milidetik = 1 jam
+
+//konfirmasi pengembalian buku
+export async function konfirmasiPengembalian(req, res) {
+  const { InvoiceID } = req.body;
+
+  try {
+    // Mengambil peminjaman berdasarkan InvoiceID
+    const peminjaman = await prisma.peminjaman.findUnique({
+      where: { InvoiceID },
+    });
+
+    if (!peminjaman) {
+      return res.status(404).json({
+        message: "Peminjaman tidak ditemukan",
+      });
+    }
+
+    // Mengupdate status peminjaman menjadi "selesai" dan isConfirmed menjadi true
+    await prisma.peminjaman.update({
+      where: { InvoiceID },
+      data: { Status: "selesai", isConfirmed: true },
+    });
+
+    res.status(200).json({
+      message: "Pengembalian buku telah dikonfirmasi",
+    });
+  } catch (error) {
+    console.error("Error confirming pengembalian buku:", error);
+    res.status(500).json({
+      message: "Internal server error",
+      error: error.message,
+    });
+  }
+}
 
 //untuk ngetest aja sih
 export async function getPeminjamanSedangPinjamUserID(req, res) {
