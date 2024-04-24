@@ -339,7 +339,7 @@ async function updatePeminjamanStatus() {
 }
 
 // Fungsi untuk menjalankan updatePeminjamanStatus() setiap jam sekali
-setInterval(updatePeminjamanStatus, 3600000); // 3600000 milidetik = 1 jam
+setInterval(updatePeminjamanStatus, 60000); // 3600000 milidetik = 1 jam
 
 //untuk ngetest aja sih
 export async function getPeminjamanSedangPinjamUserID(req, res) {
