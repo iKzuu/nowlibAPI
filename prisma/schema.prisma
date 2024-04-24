@@ -57,6 +57,8 @@ model Peminjaman{
   TglPeminjaman DateTime
   TglPengembalian DateTime
   Status Status @default(sedangpinjam)
+  InvoiceID String ? @unique
+  isConfirmed Boolean @default(false)
 }
 
 enum Status {

@@ -244,12 +244,12 @@ export async function createPeminjaman(req, res) {
 
 // Endpoint untuk admin mengonfirmasi pengembalian buku
 export async function konfirmasiPengembalian(req, res) {
-  const { pinjamId } = req.body;
+  const { PinjamID } = req.body;
 
   try {
     // Mengambil peminjaman berdasarkan PinjamID
     const peminjaman = await prisma.peminjaman.findUnique({
-      where: { PinjamID: parseInt(pinjamId) },
+      where: { PinjamID: parseInt(PinjamID) },
     });
 
     if (!peminjaman) {
@@ -260,7 +260,7 @@ export async function konfirmasiPengembalian(req, res) {
 
     // Mengupdate status peminjaman menjadi "selesai" dan isConfirmed menjadi true
     await prisma.peminjaman.update({
-      where: { PinjamID: parseInt(pinjamId) },
+      where: { PinjamID: parseInt(PinjamID) },
       data: { Status: "selesai", isConfirmed: true },
     });
 
@@ -328,7 +328,7 @@ async function updatePeminjamanStatus() {
         peminjaman.map(async (p) => {
           await prisma.peminjaman.update({
             where: { PinjamID: p.PinjamID },
-            data: { Status: "selesai" },
+            data: { Status: "belumselsesai" },
           });
         })
       );
